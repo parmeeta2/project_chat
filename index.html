@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AI GUIDE</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,300">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.1.2/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400&family=Finger+Paint&display=swap">
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Roboto', sans-serif;
+        background-color: #f0f0f0;
+      }
+      
+      #scene-container {
+        width: 100%;
+        height: calc(100vh - 500px);
+        min-height: 300px;
+      }
+      
+      .card {
+        max-width: 400px;
+        margin: 20px auto;
+        border-radius: 10px;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+      }
+      
+      #header {
+        background-color: #4a4a4a;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-family: 'Finger Paint', cursive;
+      }
+      
+      #message-section {
+        height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+      
+      #input-section {
+        display: flex;
+        padding: 10px;
+        background-color: #f1f1f1;
+      }
+      
+      #input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      
+      .send {
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      
+      .circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a4a4a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+      }
+      
+      .message {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        max-width: 80%;
+      }
+      
+      #user {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+        margin-left: auto;
+      }
+      
+      #bot {
+        background-color: #e9ecef;
+        color: black;
+        align-self: flex-start;
+      }
+      
+      #message-section {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scene-container">
+      <a-scene embedded>
+        <a-sky color="#87CEEB"></a-sky>
+        <a-text 
+          value="Welcome to Chatbot VR" 
+          position="-0.5 2 -3" 
+          scale="1.5 1.5 1.5" 
+          color="#FFFFFF"
+        ></a-text>
+        <a-entity id="chatbot-entity" 
+          geometry="primitive: box" 
+          material="color: #4CC3D9" 
+          position="0 1.5 -3" 
+          scale="0.5 0.5 0.5"
+        ></a-entity>
+      </a-scene>
+    </div>
+
+    <div class="card">
+      <div id="header">
+        <h1>AI GUIDE </h1>
+      </div>
+      <div id="message-section">
+        <div class="message" id="bot"><span id="bot-response">Need help with a lab? Type your question here!</span></div>
+      </div>
+      <div id="input-section">
+        <input id="input" type="text" placeholder="Type a message" autocomplete="off" autofocus="autofocus"/>
+        <button class="send" onclick="sendMessage()">
+          <div class="circle"><i class="zmdi zmdi-mail-send"></i></div>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Paste the entire JavaScript code from the original script here
+      const userMessage = [
+  ["what is optics", "tell me about optics", "what is optical science", "optics"],
+  ["how do lenses work", "how do concave and convex lenses differ", "what is a lens", "refraction in lenses", "lens"],
+  ["what is light", "what is the speed of light", "how fast does light travel", "tell me about light", "light speed","light"],
+  ["what is refraction", "refraction", "how does light refract", "what causes refraction"],
+  ["what is diffraction", "explain diffraction", "diffraction"],
+  ["what is interference", "tell me about interference", "explain interference in light","interference"],
+  ["what is polarization", "what is light polarization", "how does polarization work","polarization"],
+  ["what is a prism", "how does a prism work", "what is the use of a prism", "explain how a prism splits light","prism"],
+  ["what is total internal reflection", "explain total internal reflection", "how does total internal reflection work","reflection"],
+  ["what is the refractive index", "define refractive index", "how to calculate refractive index"],
+  ["what is optical fiber", "how does optical fiber work", "what is the principle of optical fiber","optical fiber"],
+  ["what is a microscope", "how does a microscope work", "explain how a microscope works","microscope"],
+  ["what is a telescope", "tell me about telescopes", "how does a telescope work","telescope"],
+  ["what is chromatic aberration", "define chromatic aberration", "how does chromatic aberration occur"],
+  ["what is spherical aberration", "explain spherical aberration", "how does spherical aberration occur"],
+  ["what is focal length", "how do you measure focal length", "define focal length","focal length"],
+  ["how do mirrors work", "what is the difference between concave and convex mirrors", "explain reflection in mirrors","concave","convex"],
+  ["what is the electromagnetic spectrum", "explain the electromagnetic spectrum", "how does light fit in the electromagnetic spectrum"],
+  ["what is the Doppler effect", "explain Doppler effect in light", "how does Doppler effect work in optics","doppler effect"],
+  ["how do cameras work", "how do cameras capture images", "tell me about camera optics"],
+  ["what is magnification", "define magnification", "how is magnification calculated","magnification"],
+  ["what are optical illusions", "explain optical illusions", "how do optical illusions work"],
+  ["what is laser", "tell me about laser", "how does laser work","laser"],
+  ["what is fiber optics", "how does fiber optics work", "explain fiber optics technology","fiber optics"],
+  ["what is the critical angle", "define critical angle", "how do you calculate the critical angle","critical angle"],
+  ["how does a magnifying glass work", "what is the principle of a magnifying glass", "how do convex lenses magnify"],
+  ["what is a convex lens", "how does a convex lens work", "what is the function of a convex lens"],
+  ["what is a concave lens", "how does a concave lens work", "what is the function of a concave lens"],
+  ["what is a laser pointer", "how does a laser pointer work", "what is the technology behind laser pointers"],
+  ["what is refraction index", "how is refractive index calculated", "what does the refractive index mean"],
+  ["how do fiber optic cables transmit data", "what is the principle behind fiber optics", "how does fiber optics work in communication"],
+  ["what is light reflection", "how does light reflect", "define light reflection"],
+  ["what is the speed of light in water", "what is the refractive index of water", "how fast does light travel in water"],
+  ["what is a diffraction grating", "how does a diffraction grating work", "what is the purpose of a diffraction grating"],
+  ["what is the dispersion of light", "how does light disperse", "define dispersion in optics","dispersion"],
+  ["how does a telescope magnify", "what is the magnification power of a telescope", "how do telescopes make distant objects clearer"],
+  ["what is the difference between a microscope and a telescope", "how are microscopes and telescopes different", "what distinguishes a microscope from a telescope"],
+  ["what is total internal reflection in optical fibers", "how does total internal reflection happen in optical fibers", "explain the principle of total internal reflection in fibers"],
+  ["what is the principle of a microscope", "how does a microscope function", "explain how microscopes magnify"],
+  ["how does light travel through a vacuum", "what is the speed of light in a vacuum", "how fast does light travel through empty space"],
+  ["what is the use of a concave mirror", "how does a concave mirror work", "what are concave mirrors used for"],
+  ["how does a convex mirror reflect light", "what are the uses of convex mirrors", "how do convex mirrors work"],
+  ["how does a camera lens work", "what does a camera lens do", "how does the lens in a camera work"],
+  ["what is the principle of operation of a laser", "how does a laser generate light", "what is the working principle of lasers"],
+  ["how does a rainbow form", "what causes a rainbow", "why do we see rainbows","rainbow"],
+  ["what is the role of optical fibers in telecommunications", "how does optical fiber help in communication", "what is the importance of fiber optics in telecom"],
+  ["how does a magnifying glass work", "what makes a magnifying glass work", "how do magnifying glasses increase size"],
+  ["what is an infrared ray", "how do infrared rays work", "what is the role of infrared in optics","infrared ray"],
+  ["what is the difference between reflection and refraction", "how are reflection and refraction different", "explain the difference between refraction and reflection"],
+  ["what is the focal point of a lens", "what is a lens focal point", "how does a lens focus light"],
+  ["how do optical illusions fool the brain", "why do optical illusions happen", "how do our brains interpret optical illusions"]
+];
+
+const botReply = [
+  ["Optics is the study of light and its interaction with matter. It involves the behavior of light as it passes through different mediums."],
+  ["Lenses bend light due to refraction. Concave lenses focus light, while convex lenses spread it out."],
+  ["Light is electromagnetic radiation that travels in waves. Its speed in a vacuum is approximately 3×10^8 meters per second."],
+  ["Refraction is the bending of light as it passes from one medium to another due to a change in its speed."],
+  ["Diffraction is the bending of light around obstacles and the spreading of light waves when they pass through small openings."],
+  ["Interference occurs when two or more light waves overlap and combine to form a new wave pattern, either amplifying or canceling out."],
+  ["Polarization is the process by which light waves oscillate in a single direction, typically achieved through filters or reflection."],
+  ["A prism is a transparent optical element that refracts light and can separate it into its component colors."],
+  ["Total internal reflection happens when light strikes a surface at an angle greater than the critical angle, causing it to reflect entirely within the medium."],
+  ["The refractive index is a measure of how much light slows down when passing through a medium. It's calculated by dividing the speed of light in a vacuum by the speed in the medium."],
+  ["Optical fiber uses light to transmit data over long distances through total internal reflection, allowing for high-speed communication."],
+  ["A microscope is an optical instrument used to magnify small objects, using lenses to focus light on the sample."],
+  ["A telescope is an instrument that gathers and magnifies light to observe distant objects, commonly used in astronomy."],
+  ["Chromatic aberration occurs when different wavelengths of light are focused at different points, leading to color fringing in images."],
+  ["Spherical aberration is a defect where light rays passing through the edges of a lens or mirror do not converge at the same point as rays passing through the center."],
+  ["Focal length is the distance between the lens or mirror's surface and its focal point, where light converges."],
+  ["Mirrors reflect light. Concave mirrors focus light inward, while convex mirrors spread light outward."],
+  ["The electromagnetic spectrum encompasses all types of electromagnetic radiation, with light occupying a small portion of it."],
+  ["The Doppler effect is the change in frequency or wavelength of light due to the motion of the light source relative to the observer."],
+  ["Cameras use lenses to focus light onto a sensor, capturing an image based on the intensity and color of the light."],
+  ["Magnification refers to the process of enlarging the appearance of an object, usually through optical instruments like microscopes or telescopes."],
+  ["Optical illusions are images or visual phenomena that deceive the brain into perceiving something differently from reality."],
+  ["Laser stands for Light Amplification by Stimulated Emission of Radiation. It produces a focused beam of coherent light."],
+  ["Fiber optics transmit light signals through thin, flexible fibers, used for high-speed internet and telecommunications."],
+  ["The critical angle is the angle of incidence above which total internal reflection occurs. It's calculated using the refractive indices of the two media."],
+  ["A magnifying glass works by using a convex lens to focus light and enlarge the image of an object."]
+  ];
+
+      
+      const alternative = [
+        "Interesting, right?",
+        "That's cool! Keep asking!",
+        "Let me know if you need more details!",
+        "Hmm, that's a good question!",
+        "What else do you want to know?"
+      ];
+ 
+      
+      const synth = window.speechSynthesis;
+      
+      function voiceControl(string) {
+        let u = new SpeechSynthesisUtterance(string);
+        u.text = string;
+        u.lang = "en-aus";
+        u.volume = 1;
+        u.rate = 1;
+        u.pitch = 1;
+        synth.speak(u);
+      }
+      
+      function sendMessage() {
+        const inputField = document.getElementById("input");
+        let input = inputField.value.trim();
+        input != "" && output(input);
+        inputField.value = "";
+      }
+      
+      document.addEventListener("DOMContentLoaded", () => {
+        const inputField = document.getElementById("input");
+        inputField.addEventListener("keydown", function (e) {
+          if (e.code === "Enter") {
+            let input = inputField.value.trim();
+            input != "" && output(input);
+            inputField.value = "";
+          }
+        });
+      });
+      
+      function output(input) {
+        let product;
+      
+        let text = input.toLowerCase().replace(/[^\w\s\d]/gi, "");
+      
+        text = text
+          .replace(/[\W_]/g, " ")
+          .replace(/ a /g, " ")
+          .replace(/i feel /g, "")
+          .replace(/whats/g, "what is")
+          .replace(/please /g, "")
+          .replace(/ please/g, "")
+          .trim();
+      
+        let comparedText = compare(userMessage, botReply, text);
+      
+        product = comparedText
+          ? comparedText
+          : alternative[Math.floor(Math.random() * alternative.length)];
+        
+        // Update A-Frame text entity with bot's response
+        const chatbotTextEntity = document.createElement('a-text');
+        chatbotTextEntity.setAttribute('value', product);
+        chatbotTextEntity.setAttribute('position', '0 1 -3');
+        chatbotTextEntity.setAttribute('scale', '0.5 0.5 0.5');
+        chatbotTextEntity.setAttribute('color', '#FFFFFF');
+        document.querySelector('a-scene').appendChild(chatbotTextEntity);
+        
+        addChat(input, product);
+      }
+      
+      function compare(triggerArray, replyArray, string) {
+        let item;
+        for (let x = 0; x < triggerArray.length; x++) {
+          for (let y = 0; y < replyArray.length; y++) {
+            if (triggerArray[x][y] == string) {
+              items = replyArray[x];
+              item = items[Math.floor(Math.random() * items.length)];
+            }
+          }
+        }
+        if (item) return item;
+        else return containMessageCheck(string);
+      }
+      
+      function containMessageCheck(string) {
+        let expectedReply = [
+          [
+            "Good Bye, dude",
+            "Bye, See you!",
+            "Dude, Bye. Take care of your health in this situation."
+          ],
+          ["Good Night, dude", "Have a sound sleep", "Sweet dreams"],
+          ["Have a pleasant evening!", "Good evening too", "Evening!"],
+          ["Good morning, Have a great day!", "Morning, dude!"],
+          ["Good Afternoon", "Noon, dude!", "Afternoon, dude!"]
+        ];
+        let expectedMessage = [
+          ["bye", "tc", "take care"],
+          ["night", "good night"],
+          ["evening", "good evening"],
+          ["morning", "good morning"],
+          ["noon"]
+        ];
+        let item;
+        for (let x = 0; x < expectedMessage.length; x++) {
+          if (expectedMessage[x].includes(string)) {
+            items = expectedReply[x];
+            item = items[Math.floor(Math.random() * items.length)];
+          }
+        }
+        return item;
+      }
+      
+      function addChat(input, product) {
+        const mainDiv = document.getElementById("message-section");
+        let userDiv = document.createElement("div");
+        userDiv.id = "user";
+        userDiv.classList.add("message");
+        userDiv.innerHTML = `<span id="user-response">${input}</span>`;
+        mainDiv.appendChild(userDiv);
+      
+        let botDiv = document.createElement("div");
+        botDiv.id = "bot";
+        botDiv.classList.add("message");
+        botDiv.innerHTML = `<span id="bot-response">${product}</span>`;
+        mainDiv.appendChild(botDiv);
+        var scroll = document.getElementById("message-section");
+        scroll.scrollTop = scroll.scrollHeight;
+        voiceControl(product);
+      }
+    </script>
+  </body>
+</html>
